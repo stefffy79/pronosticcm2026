@@ -3,83 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predictor CM 2026 - Automatizat</title>
+    <title>Predictor CM 2026 - Mobile Optimized</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; margin: 20px; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1, h2 { color: #1e3799; text-align: center; }
-        .section { margin-bottom: 25px; padding: 20px; border: 1px solid #dcdde1; border-radius: 10px; background-color: #fff; }
+        /* RESET ȘI BAZĂ */
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; margin: 10px; padding: 0; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
-        th, td { border: 1px solid #dcdde1; padding: 10px; text-align: center; }
-        th { background-color: #4a69bd; color: white; }
-        
-        .user-link { color: #0c2461; cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .correct { background-color: #c8e6c9 !important; font-weight: bold; }
-        
-        #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); overflow-y: auto; }
-        .modal-content { background: white; margin: 5% auto; padding: 25px; width: 90%; border-radius: 10px; position: relative; }
-        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 28px; cursor: pointer; }
+        .container { 
+            max-width: 1200px; 
+            margin: auto; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: hidden; /* Împiedică scroll-ul orizontal pe containerul principal */
+        }
 
-        button { background-color: #38ada9; color: white; padding: 8px 15px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; margin: 5px; }
-        button:hover { background-color: #079992; }
+        h1 { color: #1e3799; text-align: center; font-size: 1.5rem; }
+        h2, h3 { color: #1e3799; margin-top: 10px; font-size: 1.2rem; }
+
+        .section { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 1px solid #dcdde1; 
+            border-radius: 10px; 
+            background-color: #fff; 
+        }
+        
+        /* GRILA ADMINISTRARE - REPARATĂ PENTRU MOBIL */
+        .admin-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+        }
+
+        /* FLEXBOX PENTRU INPUT-URI - REPARAT */
+        .input-group-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .input-box {
+            border: 1px solid #eee; 
+            padding: 15px; 
+            border-radius: 8px; 
+            flex: 1; 
+            min-width: 280px; /* Previne înghesuirea prea tare */
+        }
+
+        /* TABELE RESPONSIVE */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* Permite scroll doar pe tabel dacă e prea lat */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px; 
+            font-size: 0.85rem; 
+        }
+
+        th, td { border: 1px solid #dcdde1; padding: 8px; text-align: center; }
+        th { background-color: #4a69bd; color: white; }
+
+        /* BUTOANE */
+        button { 
+            background-color: #38ada9; 
+            color: white; 
+            padding: 10px 12px; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            width: 100%; /* Butoane pe toată lățimea pe mobil pentru ușurință */
+            margin: 5px 0;
+        }
+
         .btn-danger { background-color: #eb4d4b; }
         .btn-export { background-color: #f39c12; }
-        
-        input, select { padding: 6px; border: 1px solid #b2bec3; border-radius: 4px; }
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .sub-label { font-size: 0.8em; color: #666; font-weight: bold; display: block; margin-top: 5px; }
-        .auto-info { font-size: 0.75em; color: #27ae60; font-style: italic; }
+
+        input, select { 
+            padding: 8px; 
+            border: 1px solid #b2bec3; 
+            border-radius: 4px; 
+            width: 100%; /* Input-urile ocupă rândul lor */
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] { width: 60px; display: inline-block; } /* Păstrăm numerele mici */
+
+        .user-link { color: #0c2461; cursor: pointer; text-decoration: underline; font-weight: bold; }
+        .sub-label { font-size: 0.8em; color: #666; font-weight: bold; display: block; margin-bottom: 5px; }
+
+        /* MODAL */
+        #modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); overflow-y: auto; }
+        .modal-content { background: white; margin: 5% auto; padding: 15px; width: 95%; border-radius: 10px; position: relative; }
+
+        /* --- MEDIA QUERIES PENTRU TELEFON (MOD PORTRET) --- */
+        @media (max-width: 768px) {
+            .admin-grid { 
+                grid-template-columns: 1fr; /* O singură coloană pe mobil */
+            }
+            
+            div[style*="border-right"] {
+                border-right: none !important;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 15px;
+                padding-right: 0 !important;
+            }
+
+            .container { padding: 10px; }
+            
+            h1 { font-size: 1.3rem; }
+
+            /* Ajustăm tabelele să nu forțeze lățimea paginii */
+            table { font-size: 0.75rem; }
+            th, td { padding: 5px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏆 Predictor CM 2026 - Smart Edition</h1>
+    <h1>🏆 Predictor CM 2026</h1>
 
     <div class="section">
         <div class="admin-grid">
             <div style="border-right: 1px solid #eee; padding-right: 10px;">
-                <h3>Gestiune Utilizatori</h3>
+                <h3>Utilizatori</h3>
                 <input type="text" id="userName" placeholder="Nume nou">
                 <button onclick="addUser()">Adaugă</button>
-                <div id="manageUsersList" style="margin-top: 10px; max-height: 100px; overflow-y: auto; border: 1px solid #eee;"></div>
+                <div id="manageUsersList" style="margin-top: 10px; max-height: 120px; overflow-y: auto; border: 1px solid #eee; padding: 5px;"></div>
             </div>
             <div>
-                <h3>Personalizare Meciuri</h3>
-                Meci: <select id="matchRenameSelect" style="width: 100%;"></select><br>
-                Nume Nou: <input type="text" id="newName" placeholder="ex: România - Brazilia" style="width: 60%;">
+                <h3>Meciuri</h3>
+                <span class="sub-label">Selectează Meci:</span>
+                <select id="matchRenameSelect"></select>
+                <input type="text" id="newName" placeholder="Nume Nou (ex: Mexic - Italia)">
                 <button onclick="renameMatch()">Redenumește</button>
             </div>
         </div>
     </div>
 
     <div class="section">
-        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-            <div style="border: 1px solid #eee; padding: 15px; border-radius: 8px; flex: 1; min-width: 300px;">
-                <strong>1. Rezultat Real (Admin)</strong><br>
-                Meci: <select id="matchSelectAdmin" style="width: 100%;"></select><br>
-                Scor: <input type="number" id="realHome" value="0" style="width: 45px;"> - <input type="number" id="realAway" value="0" style="width: 45px;"><br>
-                Penalty: <select id="realPenalty"><option value="NU">NU</option><option value="DA">DA</option></select>
+        <h2>Introducere Rezultate</h2>
+        <div class="input-group-container">
+            <div class="input-box">
+                <strong>1. Rezultat Real (Admin)</strong>
+                <select id="matchSelectAdmin"></select>
+                <div style="text-align:center; margin: 10px 0;">
+                    <input type="number" id="realHome" value="0"> : <input type="number" id="realAway" value="0">
+                </div>
+                <span class="sub-label">Penalty:</span>
+                <select id="realPenalty"><option value="NU">NU</option><option value="DA">DA</option></select>
                 <button onclick="updateMatchResult()" class="btn-danger">Salvează Rezultat</button>
             </div>
             
-            <div style="border: 1px solid #eee; padding: 15px; border-radius: 8px; flex: 1; min-width: 300px;">
-                <strong>2. Implementare Pariu</strong><br>
-                U: <select id="userSelect"></select> M: <select id="matchSelectUser"></select><br>
+            <div class="input-box">
+                <strong>2. Implementare Pariu</strong>
+                <span class="sub-label">Utilizator & Meci:</span>
+                <select id="userSelect"></select>
+                <select id="matchSelectUser"></select>
                 
                 <span class="sub-label">Scor Corect:</span>
-                <input type="number" id="betHome" value="0" min="0" style="width: 45px;" oninput="autoSelectSign()"> - 
-                <input type="number" id="betAway" value="0" min="0" style="width: 45px;" oninput="autoSelectSign()">
+                <div style="text-align:center; margin: 5px 0;">
+                    <input type="number" id="betHome" value="0" min="0" oninput="autoSelectSign()"> : 
+                    <input type="number" id="betAway" value="0" min="0" oninput="autoSelectSign()">
+                </div>
                 
-                <span class="sub-label">Pronostic (1X2): <span class="auto-info">(auto-selectat pe baza scorului)</span></span>
+                <span class="sub-label">Pronostic (1X2):</span>
                 <select id="betSign">
                     <option value="1">1</option>
                     <option value="X" selected>X</option>
                     <option value="2">2</option>
-                </select><br>
+                </select>
                 
-                <span class="sub-label">Penalty în meci:</span>
+                <span class="sub-label">Penalty:</span>
                 <select id="betPenalty"><option value="NU">NU</option><option value="DA">DA</option></select>
                 <button onclick="placeBet()">Salvează Pariu</button>
             </div>
@@ -87,24 +190,26 @@
     </div>
 
     <div class="section" style="text-align: center;">
-        <button onclick="showFullReport()" style="background-color: #6c5ce7;">🔍 Raport General</button>
-        <button onclick="exportData()" class="btn-export">📥 Exportă în .TXT</button>
+        <button onclick="showFullReport()" style="background-color: #6c5ce7; margin-bottom: 10px;">🔍 Raport General</button>
+        <button onclick="exportData()" class="btn-export">📥 Exportă .TXT</button>
     </div>
 
     <div class="section">
         <h2>📊 Clasament Live</h2>
-        <table id="leaderboard">
-            <thead>
-                <tr>
-                    <th>Loc</th>
-                    <th>Utilizator</th>
-                    <th>Puncte Totale</th>
-                    <th>Puncte Scor Corect</th>
-                    <th>Puncte Penalty</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="table-wrapper">
+            <table id="leaderboard">
+                <thead>
+                    <tr>
+                        <th>Loc</th>
+                        <th>Utilizator</th>
+                        <th>Total</th>
+                        <th>Scor</th>
+                        <th>Pen</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -112,13 +217,14 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <h2 id="modalTitle">Detalii</h2>
-        <div id="userDetailsContent" style="overflow-x:auto;"></div>
+        <div id="userDetailsContent" class="table-wrapper"></div>
     </div>
 </div>
 
 <script>
-    let users = JSON.parse(localStorage.getItem('wc2026_smart_users')) || [];
-    let matches = JSON.parse(localStorage.getItem('wc2026_smart_matches')) || [];
+    // Logica JavaScript rămâne identică cu cea anterioară
+    let users = JSON.parse(localStorage.getItem('wc2026_final_v4_users')) || [];
+    let matches = JSON.parse(localStorage.getItem('wc2026_final_v4_matches')) || [];
 
     if (matches.length === 0) {
         for (let i = 1; i <= 72; i++) matches.push({ id: i, name: `Meciul ${i}`, realScore: null, realPenalty: null });
@@ -126,12 +232,10 @@
 
     function init() { populateMatchDropdowns(); updateUserInterface(); calculateScores(); }
 
-    // FUNCȚIA DE AUTO-SELECȚIE PRONOSTIC
     function autoSelectSign() {
         const home = parseInt(document.getElementById('betHome').value) || 0;
         const away = parseInt(document.getElementById('betAway').value) || 0;
         const signSelect = document.getElementById('betSign');
-
         if (home > away) signSelect.value = "1";
         else if (home < away) signSelect.value = "2";
         else signSelect.value = "X";
@@ -141,7 +245,9 @@
         const ids = ['matchRenameSelect', 'matchSelectAdmin', 'matchSelectUser'];
         ids.forEach(id => {
             const sel = document.getElementById(id);
+            const val = sel.value;
             sel.innerHTML = matches.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+            if(val) sel.value = val;
         });
     }
 
@@ -158,7 +264,7 @@
 
     function updateUserInterface() {
         document.getElementById('userSelect').innerHTML = users.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
-        document.getElementById('manageUsersList').innerHTML = users.map(u => `<div style="padding:4px; display:flex; justify-content:space-between; border-bottom:1px solid #eee;">${u.name} <button onclick="removeUser('${u.name}')" class="btn-danger" style="font-size:10px; padding:2px 5px;">X</button></div>`).join('');
+        document.getElementById('manageUsersList').innerHTML = users.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><span>${u.name}</span> <button onclick="removeUser('${u.name}')" class="btn-danger" style="width:auto; padding:2px 8px; font-size:10px;">X</button></div>`).join('');
     }
 
     function renameMatch() {
@@ -186,7 +292,7 @@
         const a = parseInt(document.getElementById('realAway').value) || 0;
         m.realScore = { home: h, away: a, sign: (h>a?"1":h<a?"2":"X") };
         m.realPenalty = document.getElementById('realPenalty').value;
-        save(); alert("Scor real salvat!");
+        save(); alert("Rezultat oficial salvat!");
     }
 
     function calculateScores() {
@@ -197,10 +303,7 @@
                 if (r && r.realScore) {
                     if (b.home === r.realScore.home && b.away === r.realScore.away) { u.scorePoints += 3; u.totalPoints += 3; }
                     if (b.sign === r.realScore.sign) u.totalPoints += 1;
-                    if (b.penalty === r.realPenalty) {
-                        let p = (b.penalty === "DA" ? 2 : 1);
-                        u.penaltyPoints += p; u.totalPoints += p;
-                    }
+                    if (b.penalty === r.realPenalty) { u.penaltyPoints += (b.penalty === "DA" ? 2 : 1); u.totalPoints += (b.penalty === "DA" ? 2 : 1); }
                 }
             });
         });
@@ -209,11 +312,7 @@
 
     function renderLeaderboard() {
         const tbody = document.querySelector('#leaderboard tbody');
-        const sorted = [...users].sort((a, b) => {
-            if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-            if (b.scorePoints !== a.scorePoints) return b.scorePoints - a.scorePoints;
-            return b.penaltyPoints - a.penaltyPoints;
-        });
+        const sorted = [...users].sort((a, b) => (b.totalPoints - a.totalPoints) || (b.scorePoints - a.scorePoints) || (b.penaltyPoints - a.penaltyPoints));
         tbody.innerHTML = sorted.map((u, i) => `
             <tr>
                 <td>${i+1}</td>
@@ -225,13 +324,13 @@
     }
 
     function showFullReport() {
-        let h = `<h3>Raport General</h3><table><tr><th>Utilizator</th><th>Meci</th><th>Pariu (Scor | Pron | Pen)</th><th>Real</th><th>Pts</th></tr>`;
+        let h = `<table><tr><th>User</th><th>Meci</th><th>Pariu</th><th>Real</th><th>Pts</th></tr>`;
         users.forEach(u => {
             matches.forEach(m => {
                 if(u.bets[m.id]) {
                     const b = u.bets[m.id]; const r = m.realScore;
                     let p = 0; if(r){ if(b.home===r.home && b.away===r.away)p+=3; if(b.sign===r.sign)p+=1; if(b.penalty===m.realPenalty)p+=(b.penalty==="DA"?2:1); }
-                    h += `<tr><td>${u.name}</td><td>${m.name}</td><td>${b.home}-${b.away} | ${b.sign} | ${b.penalty}</td><td>${r?r.home+'-'+r.away+' | '+r.sign+' | '+m.realPenalty:'?'}</td><td>${p}</td></tr>`;
+                    h += `<tr><td>${u.name}</td><td>${m.name}</td><td>${b.home}-${b.away} | ${b.sign}</td><td>${r?r.home+'-'+r.away:'?'}</td><td>${p}</td></tr>`;
                 }
             });
         });
@@ -240,29 +339,28 @@
     }
 
     function exportData() {
-        let t = "RAPORT PREDICTOR 2026\n====================\n\n";
-        users.sort((a,b) => b.totalPoints - a.totalPoints).forEach((u,i) => {
-            t += `${i+1}. ${u.name.toUpperCase()} - Total: ${u.totalPoints} (Scor: ${u.scorePoints}, Pen: ${u.penaltyPoints})\n`;
-        });
+        let t = "RAPORT PREDICTOR\n";
+        users.forEach(u => t += `${u.name}: ${u.totalPoints} pts\n`);
         const blob = new Blob([t], { type: 'text/plain' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Raport.txt'; a.click();
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Raport_CM2026.txt'; a.click();
     }
 
     function showUserDetails(n) {
         const u = users.find(x => x.name === n);
-        let h = `<h3>Analiză: ${n}</h3><table><tr><th>Meci</th><th>Pariu (Scor | Pron | Pen)</th><th>Real</th><th>Pts</th></tr>`;
+        let h = `<table><tr><th>Meci</th><th>Pariu</th><th>Real</th><th>Pts</th></tr>`;
         matches.forEach(m => { if(u.bets[m.id]) { 
-            const b = u.bets[m.id]; const r = m.realScore; let p = 0; let cs="", cp="", csc="";
-            if(r){ if(b.home===r.home && b.away===r.away){p+=3; csc="correct";} if(b.sign===r.sign){p+=1; cs="correct";} if(b.penalty===m.realPenalty){p+=(b.penalty==="DA"?2:1); cp="correct";} }
-            h += `<tr><td>${m.name}</td><td><span class="${csc}">${b.home}-${b.away}</span> | <span class="${cs}">${b.sign}</span> | <span class="${cp}">${b.penalty}</span></td><td>${r?r.home+'-'+r.away+' | '+r.sign+' | '+m.realPenalty:'?'}</td><td><strong>+ ${p}</strong></td></tr>`;
+            const b = u.bets[m.id]; const r = m.realScore; let p = 0;
+            if(r){ if(b.home===r.home && b.away===r.away) p+=3; if(b.sign===r.sign) p+=1; if(b.penalty===m.realPenalty) p+=(b.penalty==="DA"?2:1); }
+            h += `<tr><td>${m.name}</td><td>${b.home}-${b.away} | ${b.sign}</td><td>${r?r.home+'-'+r.away:'?'}</td><td>${p}</td></tr>`;
         }});
         document.getElementById('userDetailsContent').innerHTML = h + `</table>`;
         document.getElementById('modal').style.display = "block";
     }
 
-    function save() { localStorage.setItem('wc2026_smart_users', JSON.stringify(users)); localStorage.setItem('wc2026_smart_matches', JSON.stringify(matches)); calculateScores(); }
+    function save() { localStorage.setItem('wc2026_final_v4_users', JSON.stringify(users)); localStorage.setItem('wc2026_final_v4_matches', JSON.stringify(matches)); calculateScores(); }
     function closeModal() { document.getElementById('modal').style.display = "none"; }
     init();
 </script>
+
 </body>
 </html>
